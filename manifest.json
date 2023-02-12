@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Fix TEWEB",
+  "version": "1.0",
+  "permissions": ["tabs"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://teweb.fr.sogeti.com/*"],
+      "js": ["main.js"]
+    }
+  ],
+  "action": {
+    "default_title": "Fix TEWEB",
+    "default_popup": "popup.html"
+  }
+}
