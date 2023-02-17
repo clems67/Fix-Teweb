@@ -9,7 +9,6 @@ function ReturnMainPopup() {
 }
 
 function AddToFavorite() {
-  console.log("add_favorite : AddToFavorite");
   const activityTypeSelected = document.getElementById("activityType").value;
   const lineNumberSelected = document.getElementById("lineNumber").value;
 

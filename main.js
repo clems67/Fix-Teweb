@@ -181,10 +181,19 @@ function GetInfosAndStore(response) {
   ];
   const jsonToStore = JSON.stringify(arrayToStore);
 
-  localStorage.setItem(
-    projectSelected.options[projectSelected.selectedIndex].text,
-    jsonToStore
+  var dialog = confirm(
+    "Voulez-vous enregistrer le projet :\n" +
+      arrayToStore[2] +
+      "\navec le code BU :\n" +
+      arrayToStore[0]
   );
+
+  if (dialog) {
+    localStorage.setItem(
+      projectSelected.options[projectSelected.selectedIndex].text,
+      jsonToStore
+    );
+  }
 }
 
 function getBuOptionName(activityType, lineNumber) {
