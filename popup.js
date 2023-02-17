@@ -18,11 +18,11 @@ function DeleteAddFavoritePage() {
 }
 
 function Activate() {
-  sendInfosToMain(true);
+  sendInfosToMain("toggle_true");
 }
 
 function Disable() {
-  sendInfosToMain(false);
+  sendInfosToMain("toggle_false");
 }
 
 function sendInfosToMain(toggleValue) {
@@ -37,9 +37,7 @@ function sendInfosToMain(toggleValue) {
     });
 
     const response = await chrome.tabs.sendMessage(tab.id, {
-      toggle: toggleValue,
-      activityType: "",
-      lineNumber: "",
+      responseType: toggleValue,
     });
     // do something with response here, not outside the function
     console.log(response);

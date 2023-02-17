@@ -18,21 +18,22 @@ loop = setInterval(() => {
   } else {
     console.log("ERROR UNEXPECTED LOOP MAIN");
   }
-  //console.log("le setInterval ne fonctionne pas si il n'y a pas ce console log. Je ne sais pas pourquoi :-(");
 }, 300);
 
 chrome.runtime.onMessage.addListener(function (response, sender, sendResponse) {
   console.log("listener worked ! its response :");
   console.log(response);
-  if (response.toggle === true) {
-    console.log("c'est passé dans le true");
+  if (response.responseType === "toggle_true") {
+    console.log("c'est passé dans le toggle_true");
     localStorage.setItem("don't delete me please", "true");
-  } else if (response.toggle === false) {
-    console.log("c'est passé dans le false");
+  } else if (response.responseType === "toggle_false") {
+    console.log("c'est passé dans le toggle_false");
     localStorage.setItem("don't delete me please", "false");
-  } else {
-    console.log("c'est passé dans le else");
+  } else if (response.responseType === "save_favorite") {
+    console.log("c'est passé dans le save_favorite");
     GetInfosAndStore(response);
+  } else {
+    console.log("ERREUR C'EST PASSE DANS LE ELSE : main.js adListener");
   }
 });
 

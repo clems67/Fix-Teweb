@@ -28,7 +28,7 @@ function sendInfosToMain(activityTypeSelected, lineNumberSelected) {
     });
 
     const response = await chrome.tabs.sendMessage(tab.id, {
-      toggle: "",
+      responseType: "save_favorite",
       activityType: activityTypeSelected,
       lineNumber: lineNumberSelected,
     });
