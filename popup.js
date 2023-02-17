@@ -1,8 +1,31 @@
 window.onload = function () {
-  document.getElementById("submit").addEventListener("click", sendInfosToMain);
+  document.getElementById("activateButton").addEventListener("click", Activate);
+  document.getElementById("disableButton").addEventListener("click", Disable);
+  document
+    .getElementById("addFavoriteButton")
+    .addEventListener("click", OpenAddFavoritePage);
+  document
+    .getElementById("deleteFavoriteButton")
+    .addEventListener("click", DeleteAddFavoritePage);
 };
 
-function sendInfosToMain() {
+function OpenAddFavoritePage() {
+  window.location.href = "add_favorite.html";
+}
+
+function DeleteAddFavoritePage() {
+  window.location.href = "delete_favorite.html";
+}
+
+function Activate() {
+  sendInfosToMain(true);
+}
+
+function Disable() {
+  sendInfosToMain(false);
+}
+
+function sendInfosToMain(toggleValue) {
   console.log("button hello works");
 
   chrome.runtime.sendMessage("", function (response) {});
@@ -12,16 +35,11 @@ function sendInfosToMain() {
       active: true,
       lastFocusedWindow: true,
     });
-    const activityTypeSelected = document.getElementById("activityType").value;
-    const lineNumberSelected = document.getElementById("lineNumber").value;
-    const BuSelected = document.getElementById("BUnb").value;
-    const ProjectSelected = document.getElementById("projectID").value;
 
     const response = await chrome.tabs.sendMessage(tab.id, {
-      activityType: activityTypeSelected,
-      lineNumber: lineNumberSelected,
-      BuValue: BuSelected,
-      ProjectNumber: ProjectSelected,
+      toggle: toggleValue,
+      activityType: "",
+      lineNumber: "",
     });
     // do something with response here, not outside the function
     console.log(response);

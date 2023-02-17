@@ -2,45 +2,20 @@
 <script type="module" src="./popup.js"></script>
 <html>
   <meta charset="UTF-8" />
-  <body>
-    <select id="activityType" size="3">
-      <option value="facturable">Aucune activité facturable déclarée</option>
-      <option value="nonFacturable">
-        Aucune activité non facturable déclarée
-      </option>
-      <option value="absFormDeleg">Absences - Formations - Délégation</option>
-    </select>
+  <body style="width: 175px">
+    <button id="activateButton" style="width: 85px; height: 50px; color: green">
+      Activer
+    </button>
+    <button id="disableButton" style="width: 85px; height: 50px; color: red">
+      Désactiver
+    </button>
     <br />
-    <a>Ligne n° :</a>
-    <select id="lineNumber">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-      <option value="6">6</option>
-      <option value="7">7</option>
-      <option value="8">8</option>
-      <option value="9">9</option>
-      <option value="10">10</option>
-    </select>
     <br />
-    <a>BU :</a>
-    <select id="BUnb">
-      <option value="FR030NAT">FR030NAT</option>
-      <option value="FR030SGF">FR030SGF</option>
-    </select>
-    <br />
-    <a>Numéro Projet :</a>
-    <select id="projectID">
-      <option value="178179_01/01/2021_31/12/2025">
-        100725671 - FR030NAT-Labs-CheckMyCode
-      </option>
-      <option value="204878_01/01/2022_31/12/2026_A">
-        ALT10ECOL - FR030NAT_Absce Ecole Alterna
-      </option>
-    </select>
-    <br />
-    <button id="submit">VALIDER</button>
+    <button id="addFavoriteButton" style="width: 85px">
+      Ajouter<br />un favoris
+    </button>
+    <button id="deleteFavoriteButton" style="width: 85px">
+      Supprimer<br />un favoris
+    </button>
   </body>
 </html>
