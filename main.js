@@ -23,19 +23,82 @@ loop = setInterval(() => {
 chrome.runtime.onMessage.addListener(function (response, sender, sendResponse) {
   console.log("listener worked ! its response :");
   console.log(response);
-  if (response.responseType === "toggle_true") {
-    console.log("c'est passé dans le toggle_true");
-    localStorage.setItem("don't delete me please", "true");
-  } else if (response.responseType === "toggle_false") {
-    console.log("c'est passé dans le toggle_false");
-    localStorage.setItem("don't delete me please", "false");
-  } else if (response.responseType === "save_favorite") {
-    console.log("c'est passé dans le save_favorite");
-    GetInfosAndStore(response);
-  } else {
-    console.log("ERREUR C'EST PASSE DANS LE ELSE : main.js adListener");
+  switch (response.responseType) {
+    case "toggle_true":
+      console.log("c'est passé dans le toggle_true");
+      localStorage.setItem("don't delete me please", "true");
+      break;
+    case "toggle_false":
+      console.log("c'est passé dans le toggle_false");
+      localStorage.setItem("don't delete me please", "false");
+      break;
+    case "save_favorite":
+      console.log("c'est passé dans le save_favorite");
+      GetInfosAndStore(response);
+      break;
+    case "get_favorite":
+      console.log("c'et passé dans le get_favorite");
+      sendResponse({ favorites: GetFavoriteProjectList() });
+      break;
+    case "delete_favorite":
+      console.log("c'est passé dans le delete_favorite");
+      DeleteFavorite(response.selectedProject);
+      break;
+    default:
+      console.log("ERREUR C'EST PASSÉ DANS LE DEFAULT : main.js adListener");
   }
 });
+
+function GetInfosAndStore(response) {
+  const buOptionName = getBuOptionName(
+    response.activityType,
+    response.lineNumber
+  );
+
+  const projectOptionName = getProjectOptionName(
+    response.activityType,
+    response.lineNumber
+  );
+
+  const buSelected = document.getElementsByName(buOptionName)[0];
+  const projectSelected = document.getElementsByName(projectOptionName)[0];
+
+  const arrayToStore = [
+    buSelected.options[buSelected.selectedIndex].text, //inner html
+    buSelected.value, //option value
+    projectSelected.options[projectSelected.selectedIndex].text, //inner html
+    projectSelected.value, //option value
+  ];
+  const jsonToStore = JSON.stringify(arrayToStore);
+
+  var dialog = confirm(
+    "Voulez-vous enregistrer le projet :\n" +
+      arrayToStore[2] +
+      "\navec le code BU :\n" +
+      arrayToStore[0]
+  );
+
+  if (dialog) {
+    localStorage.setItem(
+      projectSelected.options[projectSelected.selectedIndex].text,
+      jsonToStore
+    );
+  }
+}
+
+function GetFavoriteProjectList() {
+  var favoriteList = [];
+  console.log("favorite list :");
+  for (var i = 0; i < localStorage.length; i++) {
+    const jsonValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    favoriteList[i] = jsonValue[2];
+  }
+  return JSON.stringify(favoriteList);
+}
+
+function DeleteFavorite(projectName) {
+  localStorage.removeItem(projectName);
+}
 
 function ShowAllBU() {
   var tablerows = document.getElementById(
@@ -83,6 +146,66 @@ function ShowAllProjects() {
   }
 }
 
+function ShowOnlyFavoritesBU() {
+  //get infos from local storage
+  var favoriteList = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    const jsonValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    favoriteList[i] = jsonValue[1];
+  }
+  //make only favorite elements visible
+  var tablerows = document.getElementById(
+    "ctl00_cph_a_GridViewActivitesFacturables"
+  ).rows;
+  for (var i = 1; i < tablerows.length; i++) {
+    MakeDisplayNone(favoriteList, getBuOptionName("facturable", i));
+  }
+
+  var tablerows = document.getElementById(
+    "ctl00_cph_a_GridViewActivitesNonFacturables"
+  ).rows;
+  for (var i = 1; i < tablerows.length; i++) {
+    MakeDisplayNone(favoriteList, getBuOptionName("nonFacturable", i));
+  }
+
+  var tablerows = document.getElementById(
+    "ctl00_cph_a_GridViewAbsenceFormation"
+  ).rows;
+  for (var i = 1; i < tablerows.length; i++) {
+    MakeDisplayNone(favoriteList, getBuOptionName("absFormDeleg", i));
+  }
+}
+
+function ShowOnlyFavoritesProjects() {
+  //get infos from local storage
+  var favoriteList = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    const jsonValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    favoriteList[i] = jsonValue[3];
+  }
+  //make only favorite elements visible
+  var tablerows = document.getElementById(
+    "ctl00_cph_a_GridViewActivitesFacturables"
+  ).rows;
+  for (var i = 1; i < tablerows.length; i++) {
+    MakeDisplayNone(favoriteList, getProjectOptionName("facturable", i));
+  }
+
+  var tablerows = document.getElementById(
+    "ctl00_cph_a_GridViewActivitesNonFacturables"
+  ).rows;
+  for (var i = 1; i < tablerows.length; i++) {
+    MakeDisplayNone(favoriteList, getProjectOptionName("nonFacturable", i));
+  }
+
+  var tablerows = document.getElementById(
+    "ctl00_cph_a_GridViewAbsenceFormation"
+  ).rows;
+  for (var i = 1; i < tablerows.length; i++) {
+    MakeDisplayNone(favoriteList, getProjectOptionName("absFormDeleg", i));
+  }
+}
+
 function MakeDisplayTrue(optionName) {
   var select = document.getElementsByName(optionName)[0];
   for (var i = 0; i < select.length; i++) {
@@ -90,109 +213,12 @@ function MakeDisplayTrue(optionName) {
   }
 }
 
-function ShowOnlyFavoritesBU() {
-  //get infos from local storage
-  var favoritList = [];
-  for (var i = 0; i < localStorage.length; i++) {
-    const jsonValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
-    favoritList[i] = jsonValue[1];
-  }
-  //make only favorite elements visible
-  var tablerows = document.getElementById(
-    "ctl00_cph_a_GridViewActivitesFacturables"
-  ).rows;
-  for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoritList, getBuOptionName("facturable", i));
-  }
-
-  var tablerows = document.getElementById(
-    "ctl00_cph_a_GridViewActivitesNonFacturables"
-  ).rows;
-  for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoritList, getBuOptionName("nonFacturable", i));
-  }
-
-  var tablerows = document.getElementById(
-    "ctl00_cph_a_GridViewAbsenceFormation"
-  ).rows;
-  for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoritList, getBuOptionName("absFormDeleg", i));
-  }
-}
-
-function ShowOnlyFavoritesProjects() {
-  //get infos from local storage
-  var favoritList = [];
-  for (var i = 0; i < localStorage.length; i++) {
-    const jsonValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
-    favoritList[i] = jsonValue[3];
-  }
-  //make only favorite elements visible
-  var tablerows = document.getElementById(
-    "ctl00_cph_a_GridViewActivitesFacturables"
-  ).rows;
-  for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoritList, getProjectOptionName("facturable", i));
-  }
-
-  var tablerows = document.getElementById(
-    "ctl00_cph_a_GridViewActivitesNonFacturables"
-  ).rows;
-  for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoritList, getProjectOptionName("nonFacturable", i));
-  }
-
-  var tablerows = document.getElementById(
-    "ctl00_cph_a_GridViewAbsenceFormation"
-  ).rows;
-  for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoritList, getProjectOptionName("absFormDeleg", i));
-  }
-}
-
-function MakeDisplayNone(favoritList, optionName) {
+function MakeDisplayNone(favoriteList, optionName) {
   var select = document.getElementsByName(optionName)[0];
   for (var i = 0; i < select.length; i++) {
-    if (!favoritList.includes(select.options[i].value)) {
+    if (!favoriteList.includes(select.options[i].value)) {
       select.options[i].style.display = "none";
     }
-  }
-}
-
-function GetInfosAndStore(response) {
-  const buOptionName = getBuOptionName(
-    response.activityType,
-    response.lineNumber
-  );
-
-  const projectOptionName = getProjectOptionName(
-    response.activityType,
-    response.lineNumber
-  );
-
-  const buSelected = document.getElementsByName(buOptionName)[0];
-  const projectSelected = document.getElementsByName(projectOptionName)[0];
-
-  const arrayToStore = [
-    buSelected.options[buSelected.selectedIndex].text, //inner html
-    buSelected.value, //option value
-    projectSelected.options[projectSelected.selectedIndex].text, //inner html
-    projectSelected.value, //option value
-  ];
-  const jsonToStore = JSON.stringify(arrayToStore);
-
-  var dialog = confirm(
-    "Voulez-vous enregistrer le projet :\n" +
-      arrayToStore[2] +
-      "\navec le code BU :\n" +
-      arrayToStore[0]
-  );
-
-  if (dialog) {
-    localStorage.setItem(
-      projectSelected.options[projectSelected.selectedIndex].text,
-      jsonToStore
-    );
   }
 }
 
