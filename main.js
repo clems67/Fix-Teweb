@@ -68,6 +68,7 @@ function GetInfosAndStore(response) {
     buSelected.value, //option value
     projectSelected.options[projectSelected.selectedIndex].text, //inner html
     projectSelected.value, //option value
+    response.activityType,
   ];
   const jsonToStore = JSON.stringify(arrayToStore);
 
@@ -148,31 +149,49 @@ function ShowAllProjects() {
 
 function ShowOnlyFavoritesBU() {
   //get infos from local storage
-  var favoriteList = [];
+  var favoriteListFacturable = [];
+  var favoriteListNonFacturable = [];
+  var favoriteListAbsFormDeleg = [];
   for (var i = 0; i < localStorage.length; i++) {
     const jsonValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
-    favoriteList[i] = jsonValue[1];
+    switch (jsonValue[4]) {
+      case "facturable":
+        favoriteListFacturable.push(jsonValue[1]);
+        break;
+      case "nonFacturable":
+        favoriteListNonFacturable.push(jsonValue[1]);
+        break;
+      case "absFormDeleg":
+        favoriteListAbsFormDeleg.push(jsonValue[1]);
+        break;
+    }
   }
   //make only favorite elements visible
   var tablerows = document.getElementById(
     "ctl00_cph_a_GridViewActivitesFacturables"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoriteList, getBuOptionName("facturable", i));
+    MakeDisplayNone(favoriteListFacturable, getBuOptionName("facturable", i));
   }
 
   var tablerows = document.getElementById(
     "ctl00_cph_a_GridViewActivitesNonFacturables"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoriteList, getBuOptionName("nonFacturable", i));
+    MakeDisplayNone(
+      favoriteListNonFacturable,
+      getBuOptionName("nonFacturable", i)
+    );
   }
 
   var tablerows = document.getElementById(
     "ctl00_cph_a_GridViewAbsenceFormation"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoriteList, getBuOptionName("absFormDeleg", i));
+    MakeDisplayNone(
+      favoriteListAbsFormDeleg,
+      getBuOptionName("absFormDeleg", i)
+    );
   }
 }
 
