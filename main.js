@@ -6,19 +6,23 @@ loop = setInterval(() => {
     localStorage.setItem("don't delete me please", "false");
     document.body.style.border = "10px solid orange";
   } else if (localStorage.getItem("don't delete me please") === "true") {
-    //console.log("local storage true");
     document.body.style.border = "10px solid green";
-    ShowOnlyFavoritesBU();
-    ShowOnlyFavoritesProjects();
+    if (isFirstOptionStyleDisplay("")) {
+      ShowOnlyFavoritesBU();
+      ShowOnlyFavoritesProjects();
+      console.log("local storage true");
+    }
   } else if (localStorage.getItem("don't delete me please") === "false") {
-    //console.log("local storage false");
     document.body.style.border = "10px solid orange";
-    ShowAllBU();
-    ShowAllProjects();
+    if (isFirstOptionStyleDisplay("none")) {
+      ShowAllBU();
+      ShowAllProjects();
+      console.log("local storage false");
+    }
   } else {
     console.log("ERROR UNEXPECTED LOOP MAIN");
   }
-}, 300);
+}, 100);
 
 chrome.runtime.onMessage.addListener(function (response, sender, sendResponse) {
   console.log("listener worked ! its response :");
@@ -50,12 +54,12 @@ chrome.runtime.onMessage.addListener(function (response, sender, sendResponse) {
 });
 
 function GetInfosAndStore(response) {
-  const buOptionName = getBuOptionName(
+  const buOptionName = getBuOptionId(
     response.activityType,
     response.lineNumber
   );
 
-  const projectOptionName = getProjectOptionName(
+  const projectOptionName = getProjectOptionId(
     response.activityType,
     response.lineNumber
   );
@@ -106,21 +110,21 @@ function ShowAllBU() {
     "ctl00_cph_a_GridViewActivitesFacturables"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayTrue(getBuOptionName("facturable", i));
+    MakeDisplayTrue(getBuOptionId("facturable", i));
   }
 
   var tablerows = document.getElementById(
     "ctl00_cph_a_GridViewActivitesNonFacturables"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayTrue(getBuOptionName("nonFacturable", i));
+    MakeDisplayTrue(getBuOptionId("nonFacturable", i));
   }
 
   var tablerows = document.getElementById(
     "ctl00_cph_a_GridViewAbsenceFormation"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayTrue(getBuOptionName("absFormDeleg", i));
+    MakeDisplayTrue(getBuOptionId("absFormDeleg", i));
   }
 }
 
@@ -129,21 +133,21 @@ function ShowAllProjects() {
     "ctl00_cph_a_GridViewActivitesFacturables"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayTrue(getProjectOptionName("facturable", i));
+    MakeDisplayTrue(getProjectOptionId("facturable", i));
   }
 
   var tablerows = document.getElementById(
     "ctl00_cph_a_GridViewActivitesNonFacturables"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayTrue(getProjectOptionName("nonFacturable", i));
+    MakeDisplayTrue(getProjectOptionId("nonFacturable", i));
   }
 
   var tablerows = document.getElementById(
     "ctl00_cph_a_GridViewAbsenceFormation"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayTrue(getProjectOptionName("absFormDeleg", i));
+    MakeDisplayTrue(getProjectOptionId("absFormDeleg", i));
   }
 }
 
@@ -171,7 +175,7 @@ function ShowOnlyFavoritesBU() {
     "ctl00_cph_a_GridViewActivitesFacturables"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoriteListFacturable, getBuOptionName("facturable", i));
+    MakeDisplayNone(favoriteListFacturable, getBuOptionId("facturable", i));
   }
 
   var tablerows = document.getElementById(
@@ -180,7 +184,7 @@ function ShowOnlyFavoritesBU() {
   for (var i = 1; i < tablerows.length; i++) {
     MakeDisplayNone(
       favoriteListNonFacturable,
-      getBuOptionName("nonFacturable", i)
+      getBuOptionId("nonFacturable", i)
     );
   }
 
@@ -188,10 +192,7 @@ function ShowOnlyFavoritesBU() {
     "ctl00_cph_a_GridViewAbsenceFormation"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(
-      favoriteListAbsFormDeleg,
-      getBuOptionName("absFormDeleg", i)
-    );
+    MakeDisplayNone(favoriteListAbsFormDeleg, getBuOptionId("absFormDeleg", i));
   }
 }
 
@@ -207,33 +208,33 @@ function ShowOnlyFavoritesProjects() {
     "ctl00_cph_a_GridViewActivitesFacturables"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoriteList, getProjectOptionName("facturable", i));
+    MakeDisplayNone(favoriteList, getProjectOptionId("facturable", i));
   }
 
   var tablerows = document.getElementById(
     "ctl00_cph_a_GridViewActivitesNonFacturables"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoriteList, getProjectOptionName("nonFacturable", i));
+    MakeDisplayNone(favoriteList, getProjectOptionId("nonFacturable", i));
   }
 
   var tablerows = document.getElementById(
     "ctl00_cph_a_GridViewAbsenceFormation"
   ).rows;
   for (var i = 1; i < tablerows.length; i++) {
-    MakeDisplayNone(favoriteList, getProjectOptionName("absFormDeleg", i));
+    MakeDisplayNone(favoriteList, getProjectOptionId("absFormDeleg", i));
   }
 }
 
-function MakeDisplayTrue(optionName) {
-  var select = document.getElementById(optionName);
+function MakeDisplayTrue(optionID) {
+  var select = document.getElementById(optionID);
   for (var i = 0; i < select.length; i++) {
     select.options[i].style.display = "";
   }
 }
 
-function MakeDisplayNone(favoriteList, optionName) {
-  var select = document.getElementById(optionName);
+function MakeDisplayNone(favoriteList, optionID) {
+  var select = document.getElementById(optionID);
   for (var i = 0; i < select.length; i++) {
     if (!favoriteList.includes(select.options[i].value)) {
       select.options[i].style.display = "none";
@@ -241,10 +242,12 @@ function MakeDisplayNone(favoriteList, optionName) {
   }
 }
 
-function getBuOptionName(activityType, lineNumber) {
+function getBuOptionId(activityType, lineNumber) {
   const line = 1 + Number(lineNumber);
   if (activityType == "facturable") {
-    return "ctl00_cph_a_GridViewActivitesFacturables_ctl0" + line + "_dlCodeBU";
+    return (
+      "ctl00_cph_a_GridViewActivitesFacturables_ctl0" + line + "_ddlCodeBU"
+    );
   } else if (activityType == "nonFacturable") {
     return (
       "ctl00_cph_a_GridViewActivitesNonFacturables_ctl0" + line + "_ddlCodeBU"
@@ -254,7 +257,7 @@ function getBuOptionName(activityType, lineNumber) {
   }
 }
 
-function getProjectOptionName(activityType, lineNumber) {
+function getProjectOptionId(activityType, lineNumber) {
   const line = 1 + Number(lineNumber);
   if (activityType == "facturable") {
     return (
@@ -267,4 +270,50 @@ function getProjectOptionName(activityType, lineNumber) {
   } else if (activityType == "absFormDeleg") {
     return "ctl00_cph_a_GridViewAbsenceFormation_ctl0" + line + "_ddlProjet";
   }
+}
+
+//if the first option "--Choisir BU--" or "--Choisir Projet--" has the same style.display as displayStyle => return true
+function isFirstOptionStyleDisplay(displayStyle) {
+  var tablerows = document.getElementById(
+    "ctl00_cph_a_GridViewActivitesFacturables"
+  ).rows;
+  for (var i = 1; i < tablerows.length; i++) {
+    if (
+      document.getElementById(getBuOptionId("facturable", i)).options[0].style
+        .display === displayStyle ||
+      document.getElementById(getProjectOptionId("facturable", i)).options[0]
+        .style.display === displayStyle
+    ) {
+      return true;
+    }
+  }
+
+  var tablerows = document.getElementById(
+    "ctl00_cph_a_GridViewActivitesNonFacturables"
+  ).rows;
+  for (var i = 1; i < tablerows.length; i++) {
+    if (
+      document.getElementById(getBuOptionId("nonFacturable", i)).options[0]
+        .style.display === displayStyle ||
+      document.getElementById(getProjectOptionId("nonFacturable", i)).options[0]
+        .style.display === displayStyle
+    ) {
+      return true;
+    }
+  }
+
+  var tablerows = document.getElementById(
+    "ctl00_cph_a_GridViewAbsenceFormation"
+  ).rows;
+  for (var i = 1; i < tablerows.length; i++) {
+    if (
+      document.getElementById(getBuOptionId("absFormDeleg", i)).options[0].style
+        .display === displayStyle ||
+      document.getElementById(getProjectOptionId("absFormDeleg", i)).options[0]
+        .style.display === displayStyle
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
