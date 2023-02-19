@@ -60,8 +60,8 @@ function GetInfosAndStore(response) {
     response.lineNumber
   );
 
-  const buSelected = document.getElementsByName(buOptionName)[0];
-  const projectSelected = document.getElementsByName(projectOptionName)[0];
+  const buSelected = document.getElementById(buOptionName);
+  const projectSelected = document.getElementById(projectOptionName);
 
   const arrayToStore = [
     buSelected.options[buSelected.selectedIndex].text, //inner html
@@ -226,14 +226,14 @@ function ShowOnlyFavoritesProjects() {
 }
 
 function MakeDisplayTrue(optionName) {
-  var select = document.getElementsByName(optionName)[0];
+  var select = document.getElementById(optionName);
   for (var i = 0; i < select.length; i++) {
     select.options[i].style.display = "";
   }
 }
 
 function MakeDisplayNone(favoriteList, optionName) {
-  var select = document.getElementsByName(optionName)[0];
+  var select = document.getElementById(optionName);
   for (var i = 0; i < select.length; i++) {
     if (!favoriteList.includes(select.options[i].value)) {
       select.options[i].style.display = "none";
@@ -244,15 +244,13 @@ function MakeDisplayNone(favoriteList, optionName) {
 function getBuOptionName(activityType, lineNumber) {
   const line = 1 + Number(lineNumber);
   if (activityType == "facturable") {
-    return (
-      "ctl00$cph$a$GridViewActivitesFacturables$ctl0" + line + "$ddlCodeBU"
-    );
+    return "ctl00_cph_a_GridViewActivitesFacturables_ctl0" + line + "_dlCodeBU";
   } else if (activityType == "nonFacturable") {
     return (
-      "ctl00$cph$a$GridViewActivitesNonFacturables$ctl0" + line + "$ddlCodeBU"
+      "ctl00_cph_a_GridViewActivitesNonFacturables_ctl0" + line + "_ddlCodeBU"
     );
   } else if (activityType == "absFormDeleg") {
-    return "ctl00$cph$a$GridViewAbsenceFormation$ctl0" + line + "$ddlCodeBU";
+    return "ctl00_cph_a_GridViewAbsenceFormation_ctl0" + line + "_ddlCodeBU";
   }
 }
 
@@ -260,13 +258,13 @@ function getProjectOptionName(activityType, lineNumber) {
   const line = 1 + Number(lineNumber);
   if (activityType == "facturable") {
     return (
-      "ctl00$cph$a$GridViewActivitesFacturables$ctl0" + line + "$ddlProjet"
+      "ctl00_cph_a_GridViewActivitesFacturables_ctl0" + line + "_ddlProjet"
     );
   } else if (activityType == "nonFacturable") {
     return (
-      "ctl00$cph$a$GridViewActivitesNonFacturables$ctl0" + line + "$ddlProjet"
+      "ctl00_cph_a_GridViewActivitesNonFacturables_ctl0" + line + "_ddlProjet"
     );
   } else if (activityType == "absFormDeleg") {
-    return "ctl00$cph$a$GridViewAbsenceFormation$ctl0" + line + "$ddlProjet";
+    return "ctl00_cph_a_GridViewAbsenceFormation_ctl0" + line + "_ddlProjet";
   }
 }
