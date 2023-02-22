@@ -227,17 +227,17 @@ function ShowOnlyFavoritesProjects() {
 }
 
 function MakeDisplayTrue(optionID) {
-  var select = document.getElementById(optionID);
-  for (var i = 0; i < select.length; i++) {
-    select.options[i].style.display = "";
+  var select = document.getElementById(optionID).options;
+  for (let item of select) {
+    item.style.display = "";
   }
 }
 
 function MakeDisplayNone(favoriteList, optionID) {
-  var select = document.getElementById(optionID);
-  for (var i = 0; i < select.length; i++) {
-    if (!favoriteList.includes(select.options[i].value)) {
-      select.options[i].style.display = "none";
+  var select = document.getElementById(optionID).options;
+  for (let item of select) {
+    if (!favoriteList.includes(item.value)) {
+      item.style.display = "none";
     }
   }
 }
