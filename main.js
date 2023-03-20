@@ -306,9 +306,14 @@ function MoveFavoritsOnTop(BUorProject, selectOption, activityType) {
 function GetAllFavoriteProjectList() {
   let returnedArray = [];
   for (var i = 0; i < localStorage.length; i++) {
-    const jsonValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
-    jsonValue[0].id = localStorage.key(i);
-    returnedArray.push(jsonValue);
+    if (
+      localStorage.key(i).substring(0, 2) == "id" &&
+      localStorage.key(i).length == 15
+    ) {
+      const jsonValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
+      jsonValue[0].id = localStorage.key(i);
+      returnedArray.push(jsonValue);
+    }
   }
   return returnedArray;
 }
@@ -316,10 +321,17 @@ function GetAllFavoriteProjectList() {
 function GetPartialFavoriteList(wantedValue, activityType) {
   let favoriteList = [];
   for (var i = 0; i < localStorage.length; i++) {
-    const jsonValue = JSON.parse(localStorage.getItem(localStorage.key(i)))[0];
-    if (jsonValue.activityType === activityType) {
-      //"facturable" - "nonFacturable" - "absFormDeleg"
-      favoriteList.push(jsonValue[wantedValue]);
+    if (
+      localStorage.key(i).substring(0, 2) == "id" &&
+      localStorage.key(i).length == 15
+    ) {
+      const jsonValue = JSON.parse(
+        localStorage.getItem(localStorage.key(i))
+      )[0];
+      if (jsonValue.activityType === activityType) {
+        //"facturable" - "nonFacturable" - "absFormDeleg"
+        favoriteList.push(jsonValue[wantedValue]);
+      }
     }
   }
   return favoriteList;
