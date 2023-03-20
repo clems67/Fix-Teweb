@@ -24,13 +24,12 @@ function GetFavoriteProjectList() {
     console.log(response);
     const htmlList = document.getElementById("favoritSelectList");
     const favoriteList = JSON.parse(response.favorites);
-
-    console.log(favoriteList.length);
-    if (favoriteList.length > 1) {
-      favoriteList.forEach((favoriteProject) => {
-        if (favoriteProject !== null) {
+    if (favoriteList.length > 0) {
+      favoriteList.forEach((item) => {
+        if (item.activityType !== null) {
           var option = document.createElement("option");
-          option.text = favoriteProject;
+          option.text = item[0].buText + " - " + item[0].projectText;
+          option.value = item[0].id;
           htmlList.add(option);
         }
       });
@@ -43,12 +42,12 @@ function GetFavoriteProjectList() {
 
 function DeleteFavorite() {
   const htmlSelect = document.getElementById("favoritSelectList");
-  const selectedProject = htmlSelect.options[htmlSelect.selectedIndex].text;
+  const selectedProject = htmlSelect.options[htmlSelect.selectedIndex];
   var dialog = confirm(
-    "Voulez-vous vraiment supprimer le favoris :\n" + selectedProject
+    "Voulez-vous vraiment supprimer le favoris :\n" + selectedProject.text
   );
   if (dialog) {
-    SendInfosToMain(selectedProject);
+    SendInfosToMain(selectedProject.value);
     ClearHtmlSelect();
     GetFavoriteProjectList();
   }
@@ -77,12 +76,18 @@ function ClearHtmlSelect() {
 
 function DisplayList(value) {
   if (value) {
-    document.getElementById("no_favorite").style.display = "none";
-    document.getElementById("favoritSelectList").style.display = "";
-    document.getElementById("submit").style.display = "";
+    document
+      .querySelectorAll(".displayWhenNoFavorite")
+      .forEach((e) => (e.style.display = "none"));
+    document
+      .querySelectorAll(".hideWhenNoFavorite")
+      .forEach((e) => (e.style.display = ""));
   } else {
-    document.getElementById("no_favorite").style.display = "";
-    document.getElementById("favoritSelectList").style.display = "none";
-    document.getElementById("submit").style.display = "none";
+    document
+      .querySelectorAll(".displayWhenNoFavorite")
+      .forEach((e) => (e.style.display = ""));
+    document
+      .querySelectorAll(".hideWhenNoFavorite")
+      .forEach((e) => (e.style.display = "none"));
   }
 }
