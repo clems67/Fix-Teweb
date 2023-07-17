@@ -2,12 +2,14 @@ window.onload = function () {
   let buttonFacturable = document.getElementById("buttonFacturable");
   let buttonNonFacturable = document.getElementById("buttonNonFacturable");
   let buttonAbsence = document.getElementById("buttonAbsence");
+  let projectList =  document.getElementById("favoritSelectList");
   let addFavoriteButton = document.getElementById("addFavoriteButton");
   let deleteFavoriteButton = document.getElementById("deleteFavoriteButton");
 
   buttonFacturable.addEventListener("click", GetProjectListFacturable);
   buttonNonFacturable.addEventListener("click", GetProjectListNonFacturable);
   buttonAbsence.addEventListener("click", GetProjectListAbscence);
+  projectList.addEventListener("dblclick", insertOption);
   addFavoriteButton.addEventListener("click", AddToFavorite);
   deleteFavoriteButton.addEventListener("click", DeleteFavorite);
 };
@@ -115,6 +117,21 @@ function DeleteFavorite() {
   }
 }
 
+function insertOption() {
+  let projectList =  document.getElementById("favoritSelectList");
+  let valueToSend = projectList[projectList.selectedIndex].text;
+  chrome.tabs.query({}, function (tabs) {
+    tabs.forEach(function (tab) {
+      chrome.tabs.sendMessage(tab.id, {
+        responseType: "insertProject",
+        activityType: whichActivityIsSelected(),
+        BU: valueToSend.substring(0, 8),
+        project: valueToSend.substring(11, valueToSend.length),
+      });
+    });
+  });
+}
+
 function ClearHtmlSelect() {
   const list = document.getElementById("favoritSelectList");
   const listLenght = list.options.length - 1;
@@ -126,3 +143,4 @@ function ClearHtmlSelect() {
 function whichActivityIsSelected() {
   return localStorage.getItem("activitySelected");
 }
+

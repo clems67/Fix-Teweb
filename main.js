@@ -6,6 +6,9 @@ chrome.runtime.onMessage.addListener(function (response, sender, sendResponse) {
       console.log("c'est passé dans le save_favorite");
       GetInfosAndStore(response);
       break;
+    case "insertProject":
+      insertProject(response.activityType, response.BU, response.project);
+      break;
     case "get_favorite":
       console.log("c'et passé dans le get_favorite");
       favorits = JSON.stringify(
@@ -107,4 +110,81 @@ function getProjectOptionId(activityType, lineNumber) {
   } else if (activityType == "absFormDeleg") {
     return "ctl00_cph_a_GridViewAbsenceFormation_ctl0" + line + "_ddlProjet";
   }
+}
+
+async function insertProject(activityType, BUtoFill, projectToFill) {
+  let htmlValues = getHtmlValues(activityType);
+  let nbRowsBeforeClick = document.getElementById(htmlValues.table).rows.length;
+  console.log(htmlValues);
+
+  let button = document.getElementById(htmlValues.button);
+  button.click();
+  loopInsert = setInterval(
+    function () {
+      let table = document.getElementById(htmlValues.table);
+      let selectBU = document.getElementById(
+        htmlValues.selectBUname.replace("2", table.rows.length.toString())
+      );
+      let selectProject = document.getElementById(
+        htmlValues.selectProjectName.replace("2", table.rows.length.toString())
+      );
+
+      if (table.rows.length > nbRowsBeforeClick) {
+        if (selectBU.value !== BUtoFill) {
+          var trigger = document.createElement("option");
+          trigger.value = "trigger";
+          selectProject.add(trigger);
+          selectBU.value = BUtoFill;
+          selectBU.dispatchEvent(new Event("change"));
+        } else if (
+          selectProject[selectProject.options.length - 1].value !== "trigger"
+        ) {
+          var options = Array.from(selectProject.options);
+          options.forEach(function (option) {
+            if (option.text === projectToFill) {
+              selectProject.value = option.value;
+            }
+          });
+          selectProject.dispatchEvent(new Event("change"));
+          clearInterval(loopInsert);
+          return;
+        }
+      }
+    }.bind(htmlValues, nbRowsBeforeClick),
+    50
+  );
+}
+
+function getHtmlValues(activityType) {
+  let table;
+  let selectBUname;
+  let selectProjectName;
+  let button;
+  switch (activityType) {
+    case "facturable":
+      table = "ctl00_cph_a_GridViewActivitesFacturables";
+      selectBUname = "ctl00_cph_a_GridViewActivitesFacturables_ctl02_ddlCodeBU";
+      selectProjectName =
+        "ctl00_cph_a_GridViewActivitesFacturables_ctl02_ddlProjet";
+      button = "ctl00_cph_a_btnAjoutDirect";
+      break;
+    case "nonFacturable":
+      table = "ctl00_cph_a_GridViewActivitesNonFacturables";
+      selectBUname =
+        "ctl00_cph_a_GridViewActivitesNonFacturables_ctl02_ddlCodeBU";
+      selectProjectName =
+        "ctl00_cph_a_GridViewActivitesNonFacturables_ctl02_ddlProjet";
+      button = "ctl00_cph_a_btnAjoutIndirect";
+      break;
+    case "absFormDeleg":
+      table = "ctl00_cph_a_GridViewAbsenceFormation";
+      selectBUname = "ctl00_cph_a_GridViewAbsenceFormation_ctl02_ddlCodeBU";
+      selectProjectName =
+        "ctl00_cph_a_GridViewAbsenceFormation_ctl02_ddlProjet";
+      button = "ctl00_cph_a_btnAjoutAbsences";
+      break;
+    default:
+      console.log("ERREUR C'EST PASSÉ DANS LE DEFAULT : main.js htmlValues");
+  }
+  return { table, selectBUname, selectProjectName, button };
 }
