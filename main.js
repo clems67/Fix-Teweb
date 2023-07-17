@@ -8,8 +8,11 @@ chrome.runtime.onMessage.addListener(function (response, sender, sendResponse) {
       break;
     case "get_favorite":
       console.log("c'et passé dans le get_favorite");
-      console.log(JSON.stringify(GetAllFavoriteProjectList()));
-      sendResponse({ favorites: JSON.stringify(GetAllFavoriteProjectList()) });
+      favorits = JSON.stringify(
+        GetAllFavoriteProjectList(response.activityType)
+      );
+      console.log(favorits);
+      sendResponse({ favoritList: favorits });
       break;
     case "delete_favorite":
       console.log("c'est passé dans le delete_favorite");
@@ -20,12 +23,14 @@ chrome.runtime.onMessage.addListener(function (response, sender, sendResponse) {
   }
 });
 
-function GetAllFavoriteProjectList() {
+function GetAllFavoriteProjectList(activityType) {
   let returnedArray = [];
   for (var i = 0; i < localStorage.length; i++) {
     if (
       localStorage.key(i).substring(0, 2) == "id" &&
-      localStorage.key(i).length == 15
+      localStorage.key(i).length == 15 &&
+      JSON.parse(localStorage.getItem(localStorage.key(i)))[0].activityType ===
+        activityType
     ) {
       const jsonValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
       jsonValue[0].id = localStorage.key(i);
@@ -34,7 +39,6 @@ function GetAllFavoriteProjectList() {
   }
   return returnedArray;
 }
-
 
 function GetInfosAndStore(response) {
   const buOptionName = getBuOptionId(

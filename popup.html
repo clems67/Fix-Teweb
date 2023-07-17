@@ -2,12 +2,37 @@
 <script type="module" src="./popup.js"></script>
 <html>
   <meta charset="UTF-8" />
-  <body style="width: 175px">
-    <button id="addFavoriteButton" style="width: 85px">
-      Ajouter<br />un favoris
+  <body style="display: flex; flex-direction: column; width: 450px">
+    <div
+      id="activityContainer"
+      style="display: flex; justify-content: space-around; margin-top: 10px"
+    >
+      <button id="buttonFacturable">Facturable</button>
+      <button id="buttonNonFacturable">Non Facturable</button>
+      <button id="buttonAbsence">Abscences</button>
+    </div>
+    <select id="favoritSelectList" size="20" style="margin-top: 10px"></select>
+    <button id="deleteFavoriteButton" style="margin: 10px auto 0px">
+      Supprimer le favoris sélectionné
     </button>
-    <button id="deleteFavoriteButton" style="width: 85px">
-      Supprimer<br />un favoris
-    </button>
+    <div
+      id="addFavoriteContainer"
+      style="display: flex; margin: 10px auto auto"
+    >
+      <a style="font-size: medium">Ajouter un favoris ligne n° :</a>
+      <select id="lineNumber" style="margin: auto 5px">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+      </select>
+      <button id="addFavoriteButton">VALIDER</button>
+    </div>
   </body>
 </html>
