@@ -131,7 +131,7 @@ async function insertProject(activityType, BUtoFill, projectToFill) {
 
       if (table.rows.length > nbRowsBeforeClick) {
         if (selectBU.value !== BUtoFill) {
-          var trigger = document.createElement("option");
+          let trigger = document.createElement("option");
           trigger.value = "trigger";
           selectProject.add(trigger);
           selectBU.value = BUtoFill;

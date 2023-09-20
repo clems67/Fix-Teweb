@@ -25,7 +25,6 @@ loopSearchBars = setInterval(() => {
   }
 }, 200);
 
-
 function DidNumberOfLineChanged(activityType) {
   let nbLineToTest;
   let oldNbOfLine;
@@ -57,7 +56,6 @@ function DidNumberOfLineChanged(activityType) {
   return nbLineToTest !== oldNbOfLine;
 }
 
-
 function FilterAllRows(buOrProject, activityType) {
   let nbLineToFilter;
   let filter;
@@ -66,23 +64,22 @@ function FilterAllRows(buOrProject, activityType) {
     ["inputBuNonFacturable", "inputProjectNonFactu"],
     ["inputBuNonAbsForm", "inputProjectAbsForm"],
   ];
+  let tempoActivityType = [
+    "ctl00_cph_a_GridViewActivitesFacturables",
+    "ctl00_cph_a_GridViewActivitesNonFacturables",
+    "ctl00_cph_a_GridViewAbsenceFormation",
+  ];
   switch (activityType) {
     case "facturable":
-      nbLineToFilter = document.getElementById(
-        "ctl00_cph_a_GridViewActivitesFacturables"
-      ).rows.length;
+      tempoActivityType = tempoActivityType[0];
       tempoFilterAllRows = tempoFilterAllRows[0];
       break;
     case "nonFacturable":
-      nbLineToFilter = document.getElementById(
-        "ctl00_cph_a_GridViewActivitesNonFacturables"
-      ).rows.length;
+      tempoActivityType = tempoActivityType[1];
       tempoFilterAllRows = tempoFilterAllRows[1];
       break;
     case "absFormDeleg":
-      nbLineToFilter = document.getElementById(
-        "ctl00_cph_a_GridViewAbsenceFormation"
-      ).rows.length;
+      tempoActivityType = tempoActivityType[2];
       tempoFilterAllRows = tempoFilterAllRows[2];
       break;
     default:
@@ -96,20 +93,14 @@ function FilterAllRows(buOrProject, activityType) {
     console.log("ERREUR FilterAllRows buOrProject");
   }
   console.log("filter :" + filter);
+  nbLineToFilter = document.getElementById(tempoActivityType).rows.length;
   for (var i = 1; i < nbLineToFilter; i++) {
-    if (buOrProject === "bu") {
-      console.log("the filter :" + filter);
-      console.log(document.getElementById(filter).value);
-      Filter(
-        getBuOptionId(activityType, i),
-        document.getElementById(filter).value
-      );
-    } else if (buOrProject === "project") {
-      Filter(
-        getProjectOptionId(activityType, i),
-        document.getElementById(filter).value
-      );
-    }
+    console.log("the filter :" + filter);
+    console.log(document.getElementById(filter).value);
+    Filter(
+      getOptionId(activityType, buOrProject, i),
+      document.getElementById(filter).value
+    );
   }
 }
 
@@ -130,39 +121,36 @@ function Filter(selectId, filter) {
   }
 }
 
-function getBuOptionId(activityType, lineNumber) {
+function getOptionId(activityType, buORproject, lineNumber) {
   //la première ligne est tjrs 102
   const line = 1 + Number(lineNumber);
-  if (activityType == "facturable") {
-    return (
-      "ctl00_cph_a_GridViewActivitesFacturables_ctl0" + line + "_ddlCodeBU"
-    );
-  } else if (activityType == "nonFacturable") {
-    return (
-      "ctl00_cph_a_GridViewActivitesNonFacturables_ctl0" + line + "_ddlCodeBU"
-    );
-  } else if (activityType == "absFormDeleg") {
-    return "ctl00_cph_a_GridViewAbsenceFormation_ctl0" + line + "_ddlCodeBU";
+  let activityTypeData = [
+    "ctl00_cph_a_GridViewActivitesFacturables_ctl0",
+    "ctl00_cph_a_GridViewActivitesNonFacturables_ctl0",
+    "ctl00_cph_a_GridViewAbsenceFormation_ctl0",
+  ];
+  let activity;
+  switch (activityType) {
+    case "facturable":
+      activity = activityTypeData[0];
+      break;
+    case "nonFacturable":
+      activity = activityTypeData[1];
+      break;
+    case "absFormDeleg":
+      activity = activityTypeData[2];
+      break;
+    default:
+      console.log("ERREUR getOptionId activityType");
+  }
+  if (buORproject === "bu") {
+    return activity + line + "_ddlCodeBU";
+  } else if (buORproject === "project") {
+    return activity + line + "_ddlProjet";
+  } else {
+    console.log("ERREUR getOptionId buORproject");
   }
 }
-
-function getProjectOptionId(activityType, lineNumber) {
-  //la première ligne est tjrs 102
-  const line = 1 + Number(lineNumber);
-  if (activityType == "facturable") {
-    return (
-      "ctl00_cph_a_GridViewActivitesFacturables_ctl0" + line + "_ddlProjet"
-    );
-  } else if (activityType == "nonFacturable") {
-    return (
-      "ctl00_cph_a_GridViewActivitesNonFacturables_ctl0" + line + "_ddlProjet"
-    );
-  } else if (activityType == "absFormDeleg") {
-    return "ctl00_cph_a_GridViewAbsenceFormation_ctl0" + line + "_ddlProjet";
-  }
-}
-
-
 
 function InitiateSearchBars() {
   let inputBU = document.createElement("input");
