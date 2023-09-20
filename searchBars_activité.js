@@ -1,4 +1,5 @@
 InitiateSearchBars();
+RemoveMarginTop();
 
 let numberLinefacturable = 1;
 let numberLinenonFacturable = 1;
