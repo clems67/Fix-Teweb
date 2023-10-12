@@ -9,7 +9,7 @@
   "content_scripts": [
     {
       "matches": ["https://teweb.fr.sogeti.com/TEWeb/ui/Cra.aspx"],
-      "js": ["./main.js", "./searchBars_activité.js"]
+      "js": ["./main.js", "./searchBars_activite.js"]
     },
     {
       "matches": ["https://teweb.fr.sogeti.com/TEWeb/ui/Astreintes.aspx"],
