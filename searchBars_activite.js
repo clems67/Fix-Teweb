@@ -196,6 +196,9 @@ function InitiateSearchBars() {
   parentDiv.insertBefore(inputProject, activityNode);
 
   RemoveMarginTop();
+  
+  document.getElementById("white_wallpaper").style.display = "none";
+  document.getElementById("ajax_loader").style.display = "none";
 }
 
 function RemoveMarginTop() {

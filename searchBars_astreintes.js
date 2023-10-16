@@ -48,6 +48,9 @@ function InitiateSearchBars() {
   let parentDiv = activityNode.parentNode;
   parentDiv.insertBefore(inputBU, activityNode);
   parentDiv.insertBefore(inputProject, activityNode);
+
+  document.getElementById("white_wallpaper").style.display = "none";
+  document.getElementById("ctl00_uprg").style.display = "none";
 }
 
 function RemoveMarginTop() {
